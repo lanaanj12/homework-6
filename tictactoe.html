@@ -1,0 +1,211 @@
+<canvas id="canvas" width=500 height=500>
+</canvas>
+<script>
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+
+    const boardImage = new Image();
+    boardImage.src = "https://opengameart.org/sites/default/files/board_0.png";
+    const backgroundImg = new Image();
+    backgroundImg.src = "https://cdn.pixabay.com/photo/2017/01/08/21/11/wood-1963988_960_720.jpg";
+
+
+    const draw = function() {
+        context.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+        context.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
+    }
+    draw();
+
+
+    function drawX(dx, dy) {
+        const xImg = new Image();
+        xImg.src = 'https://owncloud.com/wp-content/uploads/2017/03/owncloud-x.png';
+        xImg.onload = function() {
+            context.drawImage(xImg, dx, dy, 150, 150);
+        }
+    };
+
+
+    function drawO(dx, dy) {
+        const oImg = new Image();
+        oImg.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Font_O.svg/2000px-Font_O.svg.png';
+        oImg.onload = function() {
+            context.drawImage(oImg, dx, dy, 150, 150);
+        }
+    };
+
+
+    const rand = function(num) {
+        return Math.floor(Math.random() * num);
+    };
+
+    const board = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+    ]
+
+    
+    const nextmove = function(board) {
+
+        for(let i=0; i< board.length; i=i+1){
+
+            for(let j=0; j< board[i].length; j=j+1){
+
+                if(board[i][j] === ''){
+                    return [i,j];
+                }
+            }
+        }
+
+    };
+
+const makeMove = function(board, coords, isX) {
+    if((coords[0] === 0 || coords[0] === 1 || coords[0] === 2) && (coords[1] === 0 || coords[1] === 1 || coords[1] === 2) ) {
+        const XorO = isX ? 'x': 'o';
+        board[coords[0]][coords[1]] = XorO;
+        return 0;
+    }
+    return -1;
+};
+   
+
+
+    const checkfindWinner = function(board) {
+        if ((board[0][0] === 'x' && board[0][1] === 'x' && board[0][2] === 'x') || (board[0][0] === 'o' && board[0][1] === 'o' && board[0][2] === 'o')) {
+            return {
+                winner: board[0][0],
+                location: [
+                    [0, 0],
+                    [0, 1],
+                    [0, 2]
+                ]
+            };
+        }
+        if ((board[1][0] === 'x' && board[1][1] === 'x' && board[1][2] === 'x') || (board[1][0] === 'o' && board[1][1] === 'o' && board[1][2] === 'o')) {
+            return {
+                winner: board[1][0],
+                location: [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2]
+                ]
+            };
+        }
+        if ((board[2][0] === 'x' && board[2][1] === 'x' && board[2][2] === 'x') || (board[2][0] === 'o' && board[2][1] === 'o' && board[2][2] === 'o')) {
+            return {
+                winner: board[2][0],
+                location: [
+                    [2, 0],
+                    [2, 1],
+                    [2, 2]
+                ]
+            };
+        }
+        if ((board[0][0] === 'x' && board[1][0] === 'x' && board[2][0] === 'x') || (board[0][0] === 'o' && board[1][0] === 'o' && board[2][0] === 'o')) {
+            return {
+                winner: board[0][0],
+                location: [
+                    [0, 0],
+                    [1, 0],
+                    [2, 0]
+                ]
+            };
+        }
+        if ((board[0][1] === 'x' && board[1][1] === 'x' && board[2][1] === 'x') || (board[0][1] === 'o' && board[1][1] === 'o' && board[2][1] === 'o')) {
+            return {
+                winner: board[0][1],
+                location: [
+                    [0, 1],
+                    [1, 1],
+                    [2, 1]
+                ]
+            };
+        }
+        if ((board[0][2] === 'x' && board[1][2] === 'x' && board[2][2] === 'x') || (board[0][2] === 'o' && board[1][2] === 'o' && board[2][2] === 'o')) {
+            return {
+                winner: board[0][2],
+                location: [
+                    [0, 2],
+                    [1, 2],
+                    [2, 2]
+                ]
+            };
+        }
+        if ((board[0][0] === 'x' && board[1][1] === 'x' && board[2][2] === 'x') || (board[0][0] === 'o' && board[1][1] === 'o' && board[2][2] === 'o')) {
+            return {
+                winner: board[0][0],
+                location: [
+                    [0, 0],
+                    [1, 1],
+                    [2, 2]
+                ]
+            };
+        }
+        if ((board[0][2] === 'x' && board[1][1] === 'x' && board[2][0] === 'x') || (board[0][2] === 'o' && board[1][1] === 'o' && board[2][0] === 'o')) {
+            return {
+                winner: board[0][2],
+                location: [
+                    [0, 2],
+                    [1, 1],
+                    [2, 0]
+                ]
+            };
+        }
+    };
+
+    let isWin = false;
+    let firstplayer = false;
+    let humanP = true;
+
+    const first = function() {
+
+
+        if (!humanP) {
+            const next = nextmove(board);
+            if (makeMove(board, next) === 0) {
+                makeMove(board, next);
+                drawO(next[1] * (canvas.width / 3), next[0] * (canvas.width / 3));
+            }
+        }
+        humanP = !humanP;
+    };
+
+    canvas.addEventListener('mousedown', function(e) {
+        if (board[Math.floor(e.offsetY / (canvas.width / 3))][Math.floor(e.offsetX / (canvas.width / 3))] === '') {
+            board[Math.floor(e.offsetY / (canvas.width / 3))][Math.floor(e.offsetX / (canvas.width / 3))] = 'x';
+            drawX(Math.floor(e.offsetX / (canvas.width / 3)) * (canvas.width / 3),
+                Math.floor(e.offsetY / (canvas.width / 3)) * (canvas.width / 3));
+            firstplayer = false;
+            humanP = false;
+        }
+        if (isWin) {
+            for (let i = 0; i < board.length; i++) {
+                for (let j = 0; j < board.length; j++) {
+                    board[i][j] = '';
+                }
+            }
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            draw();
+            isWin = false;
+            first();
+            firstplayer = true;
+        }
+        if (checkfindWinner(board)) {
+            isWin = true;
+        }
+    });
+    canvas.addEventListener('mouseup', function(e) {
+        if (!firstplayer && !isWin && !humanP) {
+            humanP = true;
+            const next = nextmove(board);
+            if (makeMove(board, next) === 0) {
+                makeMove(board, next);
+                drawO(next[1] * (canvas.width / 3), next[0] * (canvas.width / 3));
+            }
+            if (checkfindWinner(board)) {
+                isWin = true;
+            }
+        }
+    });
+</script>
